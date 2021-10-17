@@ -11,11 +11,17 @@ import { MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
+import { StringExerciseComponent } from './string-exercise/string-exercise.component';
+import { AddHyphenPipe } from './add-hyphen.pipe';
+import { ColorChangeDirective } from './color-change.directive';
 @NgModule({
   declarations: [
     AppComponent,
     NoteComponent,
-    ToolsComponent
+    ToolsComponent,
+    StringExerciseComponent,
+    AddHyphenPipe,
+    ColorChangeDirective
   ],
   imports: [
     BrowserModule,

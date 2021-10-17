@@ -1,0 +1,9 @@
+<div *ngFor="let element of stringList; let index=index; let even=even">
+    <p *ngIf="even">{{element|uppercase}}</p>
+</div>
+<br>
+<div *ngFor="let element of dateList; let index=index; let even=even">
+    <p *ngIf="even">{{element|date}}</p>
+</div>
+<br>
+<p appColorChange>{{"Ana are mere"|addHyphen:"-"}}</p>
