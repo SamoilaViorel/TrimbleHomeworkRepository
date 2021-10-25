@@ -1,4 +1,6 @@
+import { SelectorMatcher } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tools',
@@ -8,17 +10,26 @@ import { Component, OnInit } from '@angular/core';
 export class ToolsComponent implements OnInit {
 
   title: string = "Something";
-  textColor: string = "white";
-  noteContent:string="";
+  textColor: string = "red";
+  noteContent: string = "";
+  currentDate = Date.now();
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
   }
 
   buttonClick(): void {
     this.title = "Something else";
-    this.textColor=this.noteContent;
+    this.textColor = "blue";
+  }
+  
+  addNote(): void {
+     this.router.navigateByUrl('/addNote');
+  }
+
+  addDummyParam(): void {
+     this.router.navigateByUrl('/dummyParam/id');
   }
 
 }

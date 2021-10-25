@@ -1,0 +1,30 @@
+<h1>Add a note </h1>
+<form class="add-note-form">
+    <mat-form-field>
+        <input matInput name="inputNote" [(ngModel)]='title' required minlength="4" #titleModel="ngModel" />
+    </mat-form-field>
+
+    <div *ngIf="titleModel.errors?.required">
+        Title is required.
+    </div>
+
+    <mat-form-field>
+        <textarea matInput name="inputDescription" [(ngModel)]='description' required minlength="4" #descriptionModel="ngModel"></textarea>
+    </mat-form-field>
+
+    <div *ngIf="descriptionModel.errors?.required">
+        Description is required.
+    </div>
+
+    <mat-form-field appearance="fill">
+        <mat-label>Category</mat-label>
+        <mat-select>
+            <mat-option *ngFor="let category of categories" [value]="category.name">
+                {{category.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <button mat-button (click)="save()">Add</button>
+
+</form>

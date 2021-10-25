@@ -14,6 +14,14 @@ import { FormsModule } from '@angular/forms';
 import { StringExerciseComponent } from './string-exercise/string-exercise.component';
 import { AddHyphenPipe } from './add-hyphen.pipe';
 import { ColorChangeDirective } from './color-change.directive';
+import { FilterComponent } from './filter/filter.component';
+import { AddNoteComponent } from './add-note/add-note.component';
+import { HomeComponent } from './home/home.component';
+import { MatCardModule } from "@angular/material/card";
+import { DummyParamComponent } from './dummy-param/dummy-param.component';
+import { NoteService } from './services/note.service';
+import {MatSelectModule} from '@angular/material/select';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -21,7 +29,11 @@ import { ColorChangeDirective } from './color-change.directive';
     ToolsComponent,
     StringExerciseComponent,
     AddHyphenPipe,
-    ColorChangeDirective
+    ColorChangeDirective,
+    FilterComponent,
+    AddNoteComponent,
+    HomeComponent,
+    DummyParamComponent
   ],
   imports: [
     BrowserModule,
@@ -32,9 +44,12 @@ import { ColorChangeDirective } from './color-change.directive';
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
-    FormsModule
+    FormsModule,
+    MatCardModule,
+    MatSelectModule
+
   ],
-  providers: [],
+  providers: [NoteService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
