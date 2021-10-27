@@ -1,0 +1,8 @@
+<app-filter (emitSelectedFilter)="receivedCategory($event)"></app-filter>
+<app-search (emitSelectedTitle)="receivedTitle($event)"></app-search>
+<div class="home-style">
+    <!-- <app-note (emitSelected)="takeNotes($event)"></app-note> -->
+    <app-note [selectedCategoryId]="categoryId" [selectedTitle]="title"></app-note>
+    <app-tools></app-tools>
+
+</div>
