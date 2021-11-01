@@ -14,9 +14,9 @@ namespace NotesApi.Controllers
     {
         List<Owner> _ownerList = new List<Owner>()
         {
-            new Owner(){ Id = new System.Guid(), Name="Ana"},
-            new Owner(){ Id = new System.Guid(), Name="Emil"},
-            new Owner(){ Id = new System.Guid(), Name="Ion"}
+            new Owner(){ Id = new Guid("00000000-0000-0000-0000-000000000001"), Name="Ana"},
+            new Owner(){ Id = new Guid("00000000-0000-0000-0000-000000000002"), Name="Emil"},
+            new Owner(){ Id = new Guid("00000000-0000-0000-0000-000000000003"), Name="Ion"}
         };
 
         [HttpGet]
@@ -32,6 +32,42 @@ namespace NotesApi.Controllers
             return Ok(_ownerList);
         }
 
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteOwner(Guid id)
+        {
+            int index = _ownerList.FindIndex(owner => owner.Id == id);
+
+            if (index == -1)
+            {
+                return NotFound();
+            }
+
+            _ownerList.RemoveAt(index);
+
+            return NoContent();
+
+        }
+
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateOwner(Guid id, [FromBody] Owner ownerToUpdate)
+        {
+            if (ownerToUpdate == null)
+            {
+                return BadRequest("Owner cannot be null");
+            }
+
+            int index = _ownerList.FindIndex(note => note.Id == id);
+
+            if (index == -1)
+            {
+                return NotFound();
+            }
+            ownerToUpdate.Id = _ownerList[index].Id;
+            _ownerList[index] = ownerToUpdate;
+            return Ok(_ownerList[index]);
+        }
 
 
     }

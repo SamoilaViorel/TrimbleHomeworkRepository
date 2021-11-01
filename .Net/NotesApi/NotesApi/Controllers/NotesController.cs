@@ -12,12 +12,13 @@ namespace NotesApi.Controllers
     public class NotesController : ControllerBase
     {
 
-        static List<Notes> _notes = new List<Notes> { new Notes { Id = new System.Guid(), CategoryId = "1", OwnerId = new System.Guid(), Title = "First Note", Description = "First Note Description" },
-        new Notes { Id = new System.Guid("8d1f5da0-e680-4e3d-b065-6ad5ce0d1f23"), CategoryId = "1", OwnerId = new System.Guid(), Title = "Second Note", Description = "Second Note Description" },
-        new Notes { Id = new System.Guid("8d1f5da0-e680-4e3d-b065-6ad5ce0d1f23"), CategoryId = "1", OwnerId = new System.Guid(), Title = "Third Note", Description = "Third Note Description" },
-        new Notes { Id = new System.Guid(), CategoryId = "1", OwnerId = new System.Guid(), Title = "Fourth Note", Description = "Fourth Note Description" },
-        new Notes { Id = new System.Guid(), CategoryId = "1", OwnerId = new System.Guid(), Title = "Fifth Note", Description = "Fifth Note Description" }
+        private static List<Notes> _notes = new List<Notes> { new Notes { Id = new Guid("00000000-0000-0000-0000-000000000001"), CategoryId = "1", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), Title = "First Note", Description = "First Note Description" },
+        new Notes { Id = new Guid("00000000-0000-0000-0000-000000000001"), CategoryId = "1", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), Title = "Second Note", Description = "Second Note Description" },
+        new Notes { Id = Guid.NewGuid(), CategoryId = "1", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), Title = "Third Note", Description = "Third Note Description" },
+        new Notes { Id = Guid.NewGuid(), CategoryId = "1", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), Title = "Fourth Note", Description = "Fourth Note Description" },
+        new Notes { Id = Guid.NewGuid(), CategoryId = "1", OwnerId = new Guid("00000000-0000-0000-0000-000000000002"), Title = "Fifth Note", Description = "Fifth Note Description" }
         };
+
 
 
         public NotesController()
@@ -54,6 +55,90 @@ namespace NotesApi.Controllers
             }
             _notes.Add(note);
             return CreatedAtRoute("GetNoteById", new { id = note.Id.ToString() }, note);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateNote(Guid id, Guid ownerId, [FromBody] Notes noteToUpdate)
+        {
+            if (noteToUpdate == null)
+            {
+                return BadRequest("Note cannot be null");
+            }
+
+            int index;
+
+            if (ownerId != null)
+            {
+                index = _notes.FindIndex(note => note.Id == id && note.OwnerId == ownerId);
+
+            }
+            else
+            {
+                index = _notes.FindIndex(note => note.Id == id);
+
+            }
+            if (index == -1)
+            {
+                return NotFound();
+            }
+            noteToUpdate.Id = _notes[index].Id;
+            _notes[index] = noteToUpdate;
+            return Ok(_notes[index]);
+        }
+
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteNote(Guid id, Guid ownerId)
+        {
+            int index;
+
+            if (ownerId != null)
+            {
+                index = _notes.FindIndex(note => note.Id == id && note.OwnerId == ownerId);
+            }
+            else
+            {
+                index = _notes.FindIndex(note => note.Id == id);
+            }
+
+            if (index == -1)
+            {
+                return NotFound();
+            }
+
+            _notes.RemoveAt(index);
+
+            return NoContent();
+
+        }
+
+        [HttpDelete("ownerId/{ownerId}")]
+        public IActionResult DeleteAllNotesGivenByOwnerId(Guid ownerId)
+        {
+            _notes.RemoveAll(note => note.OwnerId == ownerId);
+
+            return NoContent();
+        }
+
+
+        [HttpPatch("{id}/title")]
+        public IActionResult UpdateTitleNote(Guid id, [FromBody] string title)
+        {
+            if (string.IsNullOrEmpty(title))
+            {
+                return BadRequest("The string cannot be null");
+            }
+
+            int index = _notes.FindIndex(note => note.Id == id);
+            if (index == -1)
+            {
+                return NotFound();
+            }
+
+            _notes[index].Title = title;
+
+            return NoContent();
+
         }
 
         /// <summary>
