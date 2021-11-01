@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NotesApi.Models;
+using NotesApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,38 +13,42 @@ namespace NotesApi.Controllers
     [ApiController]
     public class OwnerController : ControllerBase
     {
-        List<Owner> _ownerList = new List<Owner>()
+        IOwnerService _ownerService;
+
+        public OwnerController(IOwnerService ownerService)
         {
-            new Owner(){ Id = new Guid("00000000-0000-0000-0000-000000000001"), Name="Ana"},
-            new Owner(){ Id = new Guid("00000000-0000-0000-0000-000000000002"), Name="Emil"},
-            new Owner(){ Id = new Guid("00000000-0000-0000-0000-000000000003"), Name="Ion"}
-        };
+            _ownerService = ownerService;
+        }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok(_ownerList);
+            return Ok(_ownerService.GetAll());
         }
 
         [HttpPost]
         public IActionResult Post(Owner owner)
         {
-            _ownerList.Add(owner);
-            return Ok(_ownerList);
+            if(owner==null)
+            {
+                return BadRequest("Owner cannot be null");
+            }
+            if(_ownerService.Create(owner))
+            {
+                return Ok();
+            }
+
+            return NoContent();
         }
 
 
         [HttpDelete("{id}")]
         public IActionResult DeleteOwner(Guid id)
         {
-            int index = _ownerList.FindIndex(owner => owner.Id == id);
-
-            if (index == -1)
+            if (!_ownerService.Delete(id))
             {
                 return NotFound();
             }
-
-            _ownerList.RemoveAt(index);
 
             return NoContent();
 
@@ -58,15 +63,12 @@ namespace NotesApi.Controllers
                 return BadRequest("Owner cannot be null");
             }
 
-            int index = _ownerList.FindIndex(note => note.Id == id);
-
-            if (index == -1)
+           if(!_ownerService.Update(id,ownerToUpdate))
             {
                 return NotFound();
             }
-            ownerToUpdate.Id = _ownerList[index].Id;
-            _ownerList[index] = ownerToUpdate;
-            return Ok(_ownerList[index]);
+
+            return NoContent();
         }
 
 

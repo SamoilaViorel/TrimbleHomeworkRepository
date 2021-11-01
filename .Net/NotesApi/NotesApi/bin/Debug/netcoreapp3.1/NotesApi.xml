@@ -31,11 +31,5 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:NotesApi.Controllers.NotesController.Get">
-            <summary>
-              Returns a list of notes
-            </summary>
-            <returns></returns>
-        </member>
     </members>
 </doc>
