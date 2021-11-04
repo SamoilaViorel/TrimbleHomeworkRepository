@@ -28,7 +28,7 @@ export class NoteComponent implements OnInit, OnChanges {
 
     console.log("da");
     // this.notes = this.noteService.getSearchedNotes(this.selectedTitle, this.selectedCategoryId);
-    this.noteService.getFiltredNotes(this.selectedCategoryId).subscribe((result) => {
+    this.noteService.getFiltredNotes(this.selectedCategoryId,this.selectedTitle).subscribe((result) => {
       this.notes = result;
     });
     // this.notes = this.noteService.getSearchedNotes(this.selectedTitle);
@@ -44,8 +44,10 @@ export class NoteComponent implements OnInit, OnChanges {
     this.noteService.deleteNote(id).subscribe(() => {
       this.getNotes();
     });
+  }
 
-
+  updateNote(note:any){
+    this.router.navigate(['/updateNote'], { queryParams: { id:note.id, title: note.title, description: note.description } });
   }
 
   getNotes() {

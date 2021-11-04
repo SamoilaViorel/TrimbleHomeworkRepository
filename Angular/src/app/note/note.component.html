@@ -18,7 +18,9 @@
                 </div>
 
                 <div class="iconsToRight">
-                    <mat-icon>edit</mat-icon>
+                    <button mat-icon-button (click)="updateNote(note)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
                     <button mat-icon-button (click)="deleteNote(note.id)">
                         <mat-icon>delete</mat-icon>
                     </button>

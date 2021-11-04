@@ -7,11 +7,11 @@ import { map } from "rxjs/operators";
 @Injectable()
 export class NoteService {
 
-  
-  readonly baseUrl= "http://localhost:5000";
+
+  readonly baseUrl = "http://localhost:5000";
   readonly httpOptions = {
     headers: new HttpHeaders({
-      'Content-Type':  'application/json',
+      'Content-Type': 'application/json',
     })
   };
 
@@ -23,30 +23,49 @@ export class NoteService {
   }
 
 
-  getNotes():Observable<Note[]>{
-    return this.httpClient.get<Note[]>(this.baseUrl+'/notes',this.httpOptions);
+  getNotes(): Observable<Note[]> {
+    return this.httpClient.get<Note[]>(this.baseUrl + '/notes', this.httpOptions);
   }
 
-  addNote(noteTitle:string, noteDescription:string, noteCategoryId:string):Observable<Note>{
-    let note= {  
-                description: noteDescription,
-                title: noteTitle,
-                categoryId: noteCategoryId
-                }
-  return  this.httpClient.post<Note>(this.baseUrl+"/notes", note, this.httpOptions);
-}
+  addNote(noteTitle: string, noteDescription: string, noteCategoryId: string): Observable<Note> {
+    let note = {
+      description: noteDescription,
+      title: noteTitle,
+      categoryId: noteCategoryId
+    }
+    return this.httpClient.post<Note>(this.baseUrl + "/notes", note, this.httpOptions);
+  }
+
+  updateNote(id: string, noteTitle: string, noteDescription: string, noteCategoryId: string): Observable<Note> {
+    let note = {
+      description: noteDescription,
+      title: noteTitle,
+      categoryId: noteCategoryId
+    }
+    return this.httpClient.put<Note>(this.baseUrl + "/notes/" + id, note, this.httpOptions);
+  }
 
 
-deleteNote(id:string){
-  return this.httpClient.delete(this.baseUrl+'/notes/'+id);
-}
+  deleteNote(id: string) {
+    return this.httpClient.delete(this.baseUrl + '/notes/' + id);
+  }
 
 
-  getFiltredNotes(categoryId:string):Observable<Note[]>{
+  getFiltredNotes(categoryId: string, title: string) {
     console.log("ceva");
+
     return this.httpClient
-    .get<Note[]>(this.baseUrl+'/notes',this.httpOptions)
-    .pipe( map((notes) => notes.filter((note) => note.categoryId === categoryId)));
+      .get<Note[]>(this.baseUrl + '/notes', this.httpOptions)
+      .pipe(map((notes) => {
+        if (title) {
+          notes = notes.filter(note => note.title === title);
+        }
+        if (categoryId) {
+          notes = notes.filter(note => note.categoryId === categoryId);
+        }
+
+        return notes;
+      }));
   }
 
 
@@ -77,5 +96,5 @@ deleteNote(id:string){
 
 
 
- 
+
 }

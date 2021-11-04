@@ -23,6 +23,7 @@ import { NoteService } from './services/note.service';
 import {MatSelectModule} from '@angular/material/select';
 import { SearchComponent } from './search/search.component';
 import { HttpClientModule } from '@angular/common/http';
+import { UpdateNoteComponent } from './update-note/update-note.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { HttpClientModule } from '@angular/common/http';
     AddNoteComponent,
     HomeComponent,
     DummyParamComponent,
-    SearchComponent
+    SearchComponent,
+    UpdateNoteComponent
   ],
   imports: [
     BrowserModule,
