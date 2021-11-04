@@ -18,13 +18,13 @@
 
     <mat-form-field appearance="fill">
         <mat-label>Category</mat-label>
-        <mat-select>
+        <mat-select *ngIf="categories" name="inputCategory" [(ngModel)]="categoryId">
             <mat-option *ngFor="let category of categories" [value]="category.name">
                 {{category.name}}
             </mat-option>
         </mat-select>
     </mat-form-field>
 
-    <button mat-button (click)="save()">Add</button>
+    <button mat-button (click)="add()">Add</button>
 
 </form>

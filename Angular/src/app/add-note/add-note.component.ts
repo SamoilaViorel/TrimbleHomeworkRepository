@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Category } from '../models/category';
 import { Note } from '../note/note';
 import { FilterService } from '../services/filter.service';
@@ -18,7 +18,7 @@ export class AddNoteComponent implements OnInit {
   categoryId:string="";
   categories:Category[];
 
-  constructor(private _activatedRoute: ActivatedRoute, private noteService: NoteService, private filterService:FilterService) { }
+  constructor(private router:Router, private _activatedRoute: ActivatedRoute, private filterService:FilterService, private noteService:NoteService) { }
 
   ngOnInit(): void {
     this._activatedRoute.queryParams.subscribe(params => {
@@ -28,12 +28,15 @@ export class AddNoteComponent implements OnInit {
     this.categories=this.filterService.getFilters();
   }
 
-  save() {
-    const note: Note={id:"", title:"", description:"", categoryId:""};
-    note.title = this.title;
-    note.description = this.description;
-    note.categoryId=this.categoryId;
-    this.noteService.updateNotes(note);
+  add(){
+    this.noteService.addNote(this.title,this.description,this.categoryId).subscribe(()=>this.router.navigateByUrl(''));
   }
+  // save() {
+  //   const note: Note={id:"", title:"", description:"", categoryId:""};
+  //   note.title = this.title;
+  //   note.description = this.description;
+  //   note.categoryId=this.categoryId;
+  //   this.noteService.updateNotes(note);
+  // }
 
 }

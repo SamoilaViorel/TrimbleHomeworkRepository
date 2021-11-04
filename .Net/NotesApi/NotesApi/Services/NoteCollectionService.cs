@@ -1,4 +1,6 @@
-﻿using NotesApi.Models;
+﻿using MongoDB.Driver;
+using NotesApi.Models;
+using NotesApi.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,95 +11,61 @@ namespace NotesApi.Services
     public class NoteCollectionService : INoteCollectionService
     {
 
-        private List<Notes> _notes = new List<Notes> { new Notes { Id = new Guid("00000000-0000-0000-0000-000000000001"), CategoryId = "1", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), Title = "First Note", Description = "First Note Description" },
-        new Notes { Id = new Guid("00000000-0000-0000-0000-000000000002"), CategoryId = "1", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), Title = "Second Note", Description = "Second Note Description" },
-        new Notes { Id = new Guid("00000000-0000-0000-0000-000000000003"), CategoryId = "1", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), Title = "Third Note", Description = "Third Note Description" },
-        new Notes { Id = new Guid("00000000-0000-0000-0000-000000000004"), CategoryId = "1", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), Title = "Fourth Note", Description = "Fourth Note Description" },
-        new Notes { Id = new Guid("00000000-0000-0000-0000-000000000005"), CategoryId = "1", OwnerId = new Guid("00000000-0000-0000-0000-000000000001"), Title = "Fifth Note", Description = "Fifth Note Description" }
-        };
+        private readonly IMongoCollection<Notes> _notes;
 
-
-        public NoteCollectionService()
+        public NoteCollectionService(IMongoDBSettings settings)
         {
+            var client = new MongoClient(settings.ConnectionString);
+            var database = client.GetDatabase(settings.DatabaseName);
 
+            _notes = database.GetCollection<Notes>(settings.NoteCollectionName);
         }
 
-        public bool Create(Notes model)
+
+        public async Task<List<Notes>> GetAll()
         {
-            _notes.Add(model);
-            bool isAdded = _notes.Contains(model);
-            return isAdded;
+            var result = await _notes.FindAsync(note => true);
+            return result.ToList();
         }
 
-        public bool Delete(Guid id)
+        public async Task<bool> Create(Notes note)
         {
-            bool isDeleted;
-            var note = _notes.FirstOrDefault(c => c.Id == id);
+            await _notes.InsertOneAsync(note);
+            return true;
+        }
 
-            if (note != null)
+        public async Task<bool> Delete(Guid id)
+        {
+            var result = await _notes.DeleteOneAsync(note => note.Id == id);
+            if (!result.IsAcknowledged && result.DeletedCount == 0)
             {
-                _notes.Remove(note);
-                isDeleted = true;
+                return false;
             }
-            else
+            return true;
+        }
+
+        public async Task<Notes> Get(Guid id)
+        {
+            return (await _notes.FindAsync(note => note.Id == id)).FirstOrDefault();
+        }
+
+        public async Task<bool> Update(Guid id, Notes note)
+        {
+            note.Id = id;
+            var result = await _notes.ReplaceOneAsync(note => note.Id == id, note);
+            if (!result.IsAcknowledged && result.ModifiedCount == 0)
             {
-                isDeleted = false;
-            }
-
-            return isDeleted;
-
-        }
-
-        public Notes Get(Guid id)
-        {
-            //return _notes.Where(c => c.Id == id).FirstOrDefault();
-            return _notes.FirstOrDefault(c => c.Id == id);
-        }
-
-        public List<Notes> GetAll()
-        {
-            return _notes;
-        }
-
-        public List<Notes> GetNotesByOwnerId(Guid ownerId)
-        {
-            return (_notes.FindAll(note => note.OwnerId == ownerId));
-        }
-
-        public bool Update(Guid id, Notes model)
-        {
-
-            //_notes
-            //    .Where(c => c.Id == id)
-            //    .ToList()
-            //    .ForEach(c =>
-            //    {
-            //        c.Id = model.Id;
-            //        c.OwnerId = model.OwnerId;
-            //        c.Title = model.Title;
-            //        c.Description = model.Description;
-            //        c.CategoryId = model.CategoryId;
-            //    });
-
-
-
-            bool isUpdated;
-
-            int index = _notes.FindIndex(c => c.Id == id);
-
-
-            if (index != -1)
-            {
-                _notes[index] = model;
-
-                isUpdated = true;
-            }
-            else
-            {
-                isUpdated = false;
+                await _notes.InsertOneAsync(note);
+                return false;
             }
 
-            return isUpdated;
+            return true;
         }
+
+        public async Task<List<Notes>> GetNotesByOwnerId(Guid ownerId)
+        {
+            return (await _notes.FindAsync(note => note.OwnerId == ownerId)).ToList();
+        }
+
     }
 }

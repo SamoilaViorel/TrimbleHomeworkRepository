@@ -20,7 +20,7 @@ export class NoteComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.noteService.serviceCall();
-    this.notes = this.noteService.getNotes();
+    this.getNotes();
   }
 
 
@@ -28,7 +28,9 @@ export class NoteComponent implements OnInit, OnChanges {
 
     console.log("da");
     // this.notes = this.noteService.getSearchedNotes(this.selectedTitle, this.selectedCategoryId);
-    this.notes = this.noteService.getFiltredNotes(this.selectedCategoryId, this.selectedTitle);
+    this.noteService.getFiltredNotes(this.selectedCategoryId).subscribe((result) => {
+      this.notes = result;
+    });
     // this.notes = this.noteService.getSearchedNotes(this.selectedTitle);
     // this.notes = this.noteService.getFiltredNotes(this.selectedCategoryId);
 
@@ -36,6 +38,20 @@ export class NoteComponent implements OnInit, OnChanges {
 
   showNote(note: any): void {
     this.router.navigate(['/addNote'], { queryParams: { title: note.title, description: note.description } });
+  }
+
+  deleteNote(id: string) {
+    this.noteService.deleteNote(id).subscribe(() => {
+      this.getNotes();
+    });
+
+
+  }
+
+  getNotes() {
+    this.noteService.getNotes().subscribe((result) => {
+      this.notes = result;
+    });
   }
 
 }

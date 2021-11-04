@@ -8,7 +8,7 @@ namespace NotesApi.Services
 {
     public interface IOwnerService : ICollectionService<Owner>
     {
-        List<Owner> GetOwnerByOwnerId(Guid ownerId);
+        //List<Owner> GetOwnerByOwnerId(Guid ownerId);
 
     }
 }

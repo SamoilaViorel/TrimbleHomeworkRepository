@@ -22,23 +22,23 @@ namespace NotesApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetNotes()
+        public async Task<IActionResult> GetNotes()
         {
-            List<Notes> notes = _noteCollectionService.GetAll();
+            List<Notes> notes = await _noteCollectionService.GetAll();
             return Ok(notes);
         }
 
 
         [HttpGet("ownerId/{ownerId}")]
-        public IActionResult GetByOwnerId(Guid ownerId)
+        public async Task<IActionResult> GetByOwnerId(Guid ownerId)
         {
-            return Ok(_noteCollectionService.GetNotesByOwnerId(ownerId));
+            return Ok(await _noteCollectionService.GetNotesByOwnerId(ownerId));
         }
 
         [HttpGet("{id}", Name = "GetNoteByIdName")]
-        public IActionResult GetNoteById(Guid id)
+        public async Task<IActionResult> GetNoteById(Guid id)
         {
-            var note = _noteCollectionService.Get(id);
+            var note = await _noteCollectionService.Get(id);
 
             if (note == null)
             {
@@ -49,14 +49,14 @@ namespace NotesApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateNote([FromBody] Notes note)
+        public async Task<IActionResult> CreateNote([FromBody] Notes note)
         {
             if (note == null)
             {
                 return BadRequest("Note cannot be null");
             }
 
-            if (_noteCollectionService.Create(note))
+            if (await _noteCollectionService.Create(note))
             {
                 return CreatedAtRoute("GetNoteByIdName", new { id = note.Id.ToString() }, note);
             }
@@ -95,13 +95,13 @@ namespace NotesApi.Controllers
 
 
         [HttpPut("{id}")]
-        public IActionResult UpdateNote(Guid id, [FromBody] Notes noteToUpdate)
+        public async Task<IActionResult> UpdateNote(Guid id, [FromBody] Notes noteToUpdate)
         {
             if (noteToUpdate == null)
             {
                 return BadRequest("Note cannot be null");
             }
-            if (!_noteCollectionService.Update(id, noteToUpdate))
+            if (! await _noteCollectionService.Update(id, noteToUpdate))
             {
                 return NotFound();
             }
@@ -138,9 +138,9 @@ namespace NotesApi.Controllers
 
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteNote(Guid id)
+        public async Task<IActionResult> DeleteNote(Guid id)
         {
-            if(!_noteCollectionService.Delete(id))
+            if(! await _noteCollectionService.Delete(id))
             {
                 return NotFound();
             }

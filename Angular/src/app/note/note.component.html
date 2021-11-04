@@ -1,6 +1,6 @@
 <div class="noteContainer">
     <div class="noteDiv" *ngFor="let note of notes">
-        <mat-card class="noteCard" (click)="showNote(note)">
+        <mat-card class="noteCard">
             <div>
                 <mat-card-header class="cardTitle">
                     {{note.title}}
@@ -19,7 +19,9 @@
 
                 <div class="iconsToRight">
                     <mat-icon>edit</mat-icon>
-                    <mat-icon>delete</mat-icon>
+                    <button mat-icon-button (click)="deleteNote(note.id)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
                 </div>
             </div>
         </mat-card>

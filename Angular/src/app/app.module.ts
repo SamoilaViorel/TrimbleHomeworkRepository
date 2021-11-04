@@ -22,6 +22,7 @@ import { DummyParamComponent } from './dummy-param/dummy-param.component';
 import { NoteService } from './services/note.service';
 import {MatSelectModule} from '@angular/material/select';
 import { SearchComponent } from './search/search.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { SearchComponent } from './search/search.component';
     MatFormFieldModule,
     FormsModule,
     MatCardModule,
-    MatSelectModule
+    MatSelectModule,
+    HttpClientModule 
 
   ],
   providers: [NoteService],

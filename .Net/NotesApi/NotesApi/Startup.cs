@@ -6,7 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NotesApi.Services;
+using NotesApi.Settings;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,14 +30,32 @@ namespace NotesApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+
+
             services.AddControllers();
+
             services.AddSwaggerGen(c=>{
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+
             services.AddTransient<INoteCollectionService, NoteCollectionService>();
             services.AddTransient<IOwnerService, OwnerService>();
+
+            services.Configure<MongoDBSettings>(Configuration.GetSection(nameof(MongoDBSettings)));
+            services.AddSingleton<IMongoDBSettings>(sp => sp.GetRequiredService<IOptions<MongoDBSettings>>().Value);
+
+            services.Configure<MongoDBSettingsOwner>(Configuration.GetSection(nameof(MongoDBSettingsOwner)));
+            services.AddSingleton<IMongoDBSettingsOwner>(sp => sp.GetRequiredService<IOptions<MongoDBSettingsOwner>>().Value);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +65,8 @@ namespace NotesApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("CorsPolicy");
 
             app.UseSwagger();
 
